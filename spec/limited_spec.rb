@@ -2,7 +2,8 @@ require 'limited'
 require 'limited/action'
 
 describe Limited::Action do
-  subject { Limited::Action.new :do_some_stuff, 1337 }
+  before { @action = Limited::Action.new :do_some_stuff, 1337 }
+  subject { @action }
 
   it { should respond_to(:name) }
   it { should respond_to(:limit) }
@@ -40,6 +41,35 @@ describe Limited::Action do
       expect do
         Limited::Action.new :asdasd, -1
       end.to raise_error(ArgumentError)
+    end
+  end
+
+  describe "num_executed" do
+    it "should be initialized to 0" do
+      @action.num_executed.should eq 0
+    end
+  end
+
+  describe "executed" do
+    before { @action.executed }
+    it "should increase the num_executed counter" do
+      @action.num_executed.should eq 1
+    end
+  end
+
+  describe "limit_reached" do
+    it "should not be reached when intialized" do
+      @action.limit_reached.should be_false
+    end
+    it "should be true when 'executed' has been called 'limit' times" do
+      @action.executed
+      limit_reached.should be_false
+      1335.times { @action.executed }
+      limit_reached.should be_false
+      @action.executed
+      limit_reached.should be_true
+      @action.executed
+      limit_reached.should be_true
     end
   end
 end

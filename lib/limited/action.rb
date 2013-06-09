@@ -36,5 +36,20 @@ module Limited
     def num_left
       @limit - @num_executed
     end
+
+    ##
+    # should be called everytime
+    # the action gets executed
+    # so the internal counter is always up-to-date
+    def executed
+      @num_executed += 1
+    end
+
+    ##
+    # wheter the limit of executions
+    # has been exceeded
+    def limit_reached
+      @limit <= @num_executed
+    end
   end
 end

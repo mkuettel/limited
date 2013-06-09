@@ -63,13 +63,13 @@ describe Limited::Action do
     end
     it "should be true when 'executed' has been called 'limit' times" do
       @action.executed
-      limit_reached.should be_false
+      @action.limit_reached.should be_false
       1335.times { @action.executed }
-      limit_reached.should be_false
+      @action.limit_reached.should be_false
       @action.executed
-      limit_reached.should be_true
+      @action.limit_reached.should be_true
       @action.executed
-      limit_reached.should be_true
+      @action.limit_reached.should be_true
     end
   end
 end

@@ -8,9 +8,13 @@ Gem::Specification.new do |spec|
   spec.version       = Limited::VERSION
   spec.authors       = ["Moritz Küttel"]
   spec.email         = ["moritz.kuettel@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = %q{helps you limiting certain actions to prevent spam/dos}
+  spec.summary       = %q{
+    Some utility functions to help you limit some actions in your applications
+    (like logins, contact forms, posting of comments, etc.) to stop spammers
+    to absue your services.}
+
+  spec.homepage      = "https://github.com/mkuettel/limited"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)

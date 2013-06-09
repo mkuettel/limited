@@ -37,7 +37,7 @@ describe Limited::Interval do
   describe "reset_start" do
     it "should be calculated to a time near Time.now which difference is shorter than length" do
       c = Limited::Interval.new(100)
-      (Time.now - c.last_start).should be <= 100
+      (Time.now.to_f - c.last_start.to_f).should be <= 100
     end
   end
 
@@ -49,7 +49,8 @@ describe Limited::Interval do
       i.passed?.should be_false
     end
 
-    it "should return true and reset last_start" do
+    it "should return true when enough time passed" do
+      debugger
       Time.testing_offset += i.time_left
       i.time_left.should eq 0
       i.passed?.should be_true

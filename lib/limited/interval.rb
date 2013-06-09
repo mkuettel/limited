@@ -21,12 +21,12 @@ module Limited
     ##
     # initializes an interval
     # by either supplying the length of the
-    # interval in seconds as an integer
+    # interval in seconds as an Numeric
     # or by supplying one of the symbols
     # :second, :minute, :hour or :day
     def initialize(length)
       is_sym = length.is_a?(Symbol) and @@interval_lengths.has_key?(length)
-      raise ArgumentError.new("Limited::Interval.length needs to be an Integer or one of the symbols :second, :minute, :hour or :day") unless length.is_a?(Integer) or is_sym
+      raise ArgumentError.new("Limited::Interval.length needs to be a Numeric or one of the symbols :second, :minute, :hour or :day") unless length.is_a?(Numeric) or is_sym
       @length = is_sym ? @@interval_lengths[length] : length
       reset_start
     end
@@ -36,7 +36,7 @@ module Limited
     # reset the last_start variable
     def reset_start
       now = Time.now
-      @last_start = now - (now.to_i % @length)
+      @last_start = (now.to_f / @length).to_i * @length
     end
 
     ##
@@ -46,7 +46,7 @@ module Limited
     # when the interval ended 0 is returned so
     # this method never returns negative numbers
     def time_left
-      [0, (Time.now.to_i - last_start.to_i)].max
+      [0, (last_start.to_f + length - Time.now.to_f)].max
     end
 
     ##

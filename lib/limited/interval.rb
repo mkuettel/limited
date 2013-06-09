@@ -12,10 +12,11 @@ module Limited
     # common lengths of the intervals
     # and shortcuts for them
     @@interval_lengths = {
-      second: 1,
-      minute: 60,
-        hour: 60 * 60,
-         day: 60 * 60 * 24
+       second: 1,
+       minute: 60,
+         hour: 60 * 60,
+          day: 60 * 60 * 24,
+      endless: 1.0/0.0
     }
 
     ##
@@ -37,6 +38,7 @@ module Limited
     def reset_start
       now = Time.now
       @last_start = (now.to_f / @length).to_i * @length
+      @last_start = 0 if @last_start.is_a?(Float) and @last_start.nan?
     end
 
     ##

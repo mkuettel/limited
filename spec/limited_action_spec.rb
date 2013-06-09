@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 require 'limited'
 require 'limited/action'
 
@@ -7,6 +9,7 @@ describe Limited::Action do
 
   it { should respond_to(:name) }
   it { should respond_to(:limit) }
+  it { should respond_to(:interval) }
   it { should respond_to(:num_executed) }
   it { should respond_to(:num_left) }
 
@@ -70,6 +73,28 @@ describe Limited::Action do
       @action.limit_reached.should be_true
       @action.executed
       @action.limit_reached.should be_true
+    end
+  end
+
+  describe "with an ending interval" do
+    before { @interval_action = Limited::Action.new :ending_interval, 5, :minute }
+    it "should be able to reach the limit before the interval ends" do
+      @interval_action.limit_reached.should be_false
+      @interval_action.executed
+      @interval_action.limit_reached.should be_false
+    end
+
+    describe "after the limit has been reached" do
+      before { 5.times { @interval_action.executed } }
+      it { @interval_action.limit_reached.should be_true }
+
+      describe "after the interval passed" do
+        before { Time.testing_offset += @interval_action.interval.time_left }
+        it "should reset num_executed" do
+          @interval_action.num_executed.should be 0
+          @interval_action.limit_reached.should be_false
+        end
+      end
     end
   end
 end

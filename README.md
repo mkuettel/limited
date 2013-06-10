@@ -23,9 +23,14 @@ Or install it yourself as:
 You need to define your actions somewhere in your application like this:
 
     Limited.configure do
+      # this action should only be 1337 times at most 
       action :name_of_action, 1337
-      action :login, 20
-      action :sending_contact_email, 123
+
+      # only 1 login all 10 seconds
+      action :login, 1, 10
+
+      # at maximum 123 contact emails a day
+      action :sending_contact_email, 123, :day
     end
 
 The second parameter given to action defines how many times the action
@@ -42,11 +47,11 @@ Here are a few commonly used methods which every Action provides:
 
 <table>
   <tr>
-    <td>`executed`</td>
+    <td>executed</td>
     <td>Call this method everytime the specified action is being executed</td>
   </tr>
   <tr>
-    <td>`limit_reached`</td>
+    <td>limit_reached</td>
     <td>Wheter the limit has been reached or not</td>
   </tr>
 </table>

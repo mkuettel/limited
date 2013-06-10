@@ -11,8 +11,8 @@ module Limited
     #
     # raises an ArgumentError if the same name
     # for an action is not unique
-    def self.action(name, limit)
-      action = Limited::Action.new(name, limit)
+    def self.action(name, limit, interval_length = nil)
+      action = Limited::Action.new(name, limit, interval_length)
       raise ArgumentError.new("action with name :#{name.to_s} has already been added") if Limited.actions.has_key?(name)
       Limited.actions[name] = action
     end

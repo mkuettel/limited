@@ -24,13 +24,19 @@ module Limited
     end
 
     attr_reader :attributes
+    attr_reader :num_executed
 
-    def initialize(identifier, values)
+    def initialize(identifier, values, num_executed = 0)
       raise ArgumentError.new("first parameter needs to be an identifier") unless identifier.is_a?(Identifier)
       raise ArgumentError.new("second parameter needs to be a hash of values") unless values.is_a?(Hash)
       raise ArgumentError.new("the values given in the second parameter needs to match with the keys of the identifier") unless identifier.keys.sort == values.keys.sort
 
       @attributes = values
+      @num_executed = num_executed
+    end
+
+    def execute
+      @num_executed += 1
     end
   end
 end

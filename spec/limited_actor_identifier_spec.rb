@@ -1,4 +1,7 @@
 describe Limited::Actor::Identifier do
+  before(:all) do
+    @identifier = Limited::Actor::Identifier.new
+  end
   describe "constructor" do
     it "should take a series of symbols used as keys for identification of the actor" do
       expect do
@@ -14,7 +17,7 @@ describe Limited::Actor::Identifier do
   end
 
   describe "keys" do
-    it { Limited::Actor::Identifier.should respond_to(:keys) }
+    it { @identifier.should respond_to(:keys) }
     it "should return all the symbols given in the connstructor as an array" do
       Limited::Actor::Identifier.new(:id).keys.should eq [:id]
       Limited::Actor::Identifier.new(:id, :ip).keys.should eq [:id, :ip]
@@ -23,11 +26,11 @@ describe Limited::Actor::Identifier do
   end
 
   describe "empty_hash" do
-    it { Limited::Actor::Identifier.should respond_to(:empty_hash) }
+    it { @identifier.should respond_to(:hash_keys) }
     it "should return all the symbols given in the connstructor used as key in a hash" do
-      Limited::Actor::Identifier.new(:id).hash_keys.should eq { id: nil }
-      Limited::Actor::Identifier.new(:id, :ip).hash_keys.should eq { id: nil, ip: nil }
-      Limited::Actor::Identifier.new(:id, :ip, :page).hash_keys.should eq { :id nil, ip: nil, page: nil }
+      Limited::Actor::Identifier.new(:id).hash_keys.should eq({ id: nil })
+      Limited::Actor::Identifier.new(:id, :ip).hash_keys.should eq({ id: nil, ip: nil })
+      Limited::Actor::Identifier.new(:id, :ip, :page).hash_keys.should eq({ id: nil, ip: nil, page: nil })
     end
   end
 end

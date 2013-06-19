@@ -1,6 +1,7 @@
 require "limited/version"
 require "limited/action"
 require "limited/interval"
+require "limited/actor"
 
 module Limited
   # a hash containing all the 

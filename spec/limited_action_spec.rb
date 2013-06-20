@@ -27,7 +27,7 @@ describe Limited::Action do
     end
 
     it "should take an interval" do
-      interval = Limied::Action.new(:do_stuff, 15, :minute).interval
+      interval = Limited::Action.new(:do_stuff, 15, :minute).interval
       interval.length.should eq 60
     end
 
@@ -111,7 +111,7 @@ describe Limited::Action do
   end
 
   describe "actor" do
-    before(:all) do
+    before do
       @action.actor(id: 15)
     end
 
@@ -120,7 +120,7 @@ describe Limited::Action do
     end
 
     it "should always return an Actor object" do
-      @action.actor(id; 15).attributes.should eq {id: 15}
+      @action.actor(id: 15).attributes.should eq({id: 15})
     end
   end
 end

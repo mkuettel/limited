@@ -48,12 +48,12 @@ describe Limited::Config do
     end
 
     it "should use the name to store the object" do
-      Limited.identifiers[:do_some_task].should be_a(Limited::Actor::Identifier)
+      Limited.identifiers[:section].should be_a(Limited::Actor::Identifier)
     end
 
 
     it "should contain the symbols passed with the Limited::Config.identifier method" do
-      Limited.identifiers[:do_some_task].keys.should eq [:id]
+      Limited.identifiers[:section].keys.should eq [:id]
     end
   end
 
@@ -68,7 +68,7 @@ describe Limited::Config do
     it "should be possible to add actions via the Limited::configure method" do
       expect do
         Limited.configure do
-          action :some_action, 123
+          action :some_action, amount: 123
         end
       end.to change(Limited, :actions)
     end

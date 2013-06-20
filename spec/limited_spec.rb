@@ -1,5 +1,5 @@
 Limited.configure do
-  action :missing_method_test, 13
+  action :missing_method_test, amount: 13
 end
 
 describe Limited do

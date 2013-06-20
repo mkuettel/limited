@@ -11,10 +11,20 @@ module Limited
     #
     # raises an ArgumentError if the same name
     # for an action is not unique
-    def self.action(name, limit, interval_length = nil)
-      action = Limited::Action.new(name, limit, interval_length)
+    def self.action(name, options = {})
+      raise ArgumentError.new("the options parameter needs to be a hash") unless options.is_a?(Hash)
+      limit = options[:amount]
+      interval = options[:every] || :endless
+      identifier = options[:per].is_a?(Symbol) ? Limited::identifiers[options[:per]] : options[:per]
+      action = Limited::Action.new(name, limit, interval, identifier)
       raise ArgumentError.new("action with name :#{name.to_s} has already been added") if Limited.actions.has_key?(name)
       Limited.actions[name] = action
+    end
+
+    def self.identifier(name, symbols)
+      identifier = Limited::Actor::Identifier.new *symbols
+      raise ArgumentError.new("identifier with name :#{name.to_s} has already been added") if Limited.identifiers.has_key?(name)
+      Limited.identifiers[name] = identifier
     end
   end
 

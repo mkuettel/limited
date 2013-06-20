@@ -9,6 +9,10 @@ module Limited
     # the amount of times the action can be executed
     attr_reader :limit
 
+    attr_reader :identifier
+
+    attr_reader :actors
+
     ##
     # :call-seq:
     #   Limited::Action.new(name, limit) -> Limited::Action
@@ -18,7 +22,7 @@ module Limited
     # === Example
     #
     #   Limited::Action.new :do_stuff, 1000
-    def initialize(name, limit, interval = nil)
+    def initialize(name, limit, interval = nil, identifier = [])
       raise ArgumentError.new("Limited::Action::name needs to be a Symbol") unless name.is_a?(Symbol)
       raise ArgumentError.new("Limited::Action::limit needs to be an Integer") unless limit.is_a?(Integer)
       raise ArgumentError.new("Limited::Action::limit needs to be positive") if limit < 0
@@ -27,6 +31,9 @@ module Limited
       @limit = limit
       @num_executed = 0
       @interval = Interval.new(interval.nil? ? :endless : interval)
+      @identifier = identifier.is_a?(Limited::Actor::Identifier) ? identifier : Limited::Actor::Identifier.new(*identifier)
+
+      @actors = []
       check_new_interval
     end
 
@@ -68,6 +75,18 @@ module Limited
     def limit_reached
       check_new_interval
       @limit <= @num_executed
+    end
+
+    def actor(attributes)
+      actor = nil
+      @actors.each do |current_actor|
+        if current_actor.attributes == attributes
+          actor = current_actor
+        end
+      end
+
+      @actors << actor = Limited::Actor.new(@identifier, attributes) if actor.nil?
+      actor
     end
 
     private

@@ -6,18 +6,12 @@ module Limited
       attr_reader :hash_keys
 
       def initialize(*symbols)
-        is_symbol_array = symbols.kind_of?(Array)
-        symbols.each do |k|
-          is_symbol_array = is_symbol_array and k.is_a?(Symbol)
-        end
-        raise ArgumentError.new("You need to pass a list of symbols") unless is_symbol_array
-
         raise ArgumentError.new("The symbols passed need to be unique") unless symbols.uniq.size == symbols.uniq.size
-
         @keys = symbols.sort
         @hash_keys = {}
-        @keys.each do |sym|
-          @hash_keys[sym] = nil
+        @keys.each do |k|
+          raise ArgumentError.new("You need to pass a list of symbols") unless k.is_a?(Symbol)
+          @hash_keys[k] = nil
         end
       end
 

@@ -16,6 +16,12 @@ module Limited
     @actions
   end
 
+  @identifiers = {}
+
+  def self.identifiers
+    @identifiers
+  end
+
 
   ##
   # :call-seq:

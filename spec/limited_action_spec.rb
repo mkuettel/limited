@@ -4,7 +4,7 @@ require 'limited'
 require 'limited/action'
 
 describe Limited::Action do
-  before { @action = Limited::Action.new :do_some_stuff, 1337 }
+  before { @action = Limited::Action.new :do_some_stuff, 1337, :endless, [:id] }
   subject { @action }
 
   it { should respond_to(:name) }
@@ -12,6 +12,8 @@ describe Limited::Action do
   it { should respond_to(:interval) }
   it { should respond_to(:num_executed) }
   it { should respond_to(:num_left) }
+  it { should respond_to(:identifier) }
+  it { should respond_to(:actor) }
 
   describe "constructor" do
     it "should take a name" do
@@ -22,6 +24,16 @@ describe Limited::Action do
     it "should take a limit" do
       limit = Limited::Action.new(:do_stuff, 15).limit
       limit.should eq 15
+    end
+
+    it "should take an interval" do
+      interval = Limied::Action.new(:do_stuff, 15, :minute).interval
+      interval.length.should eq 60
+    end
+
+    it "should take an identifier" do
+      identifier = Limited::Action.new(:do_stuff, 15, :minute, [:asd]).identifier
+      identifier.keys.should eq [:asd]
     end
   end
 
@@ -95,6 +107,20 @@ describe Limited::Action do
           @interval_action.limit_reached.should be_false
         end
       end
+    end
+  end
+
+  describe "actor" do
+    before(:all) do
+      @action.actor(id: 15)
+    end
+
+    it "should create an actor if it doesn't exist yet" do
+      expect { @action.actor(id: 1337) }.to change(@action, :actors)
+    end
+
+    it "should always return an Actor object" do
+      @action.actor(id; 15).attributes.should eq {id: 15}
     end
   end
 end

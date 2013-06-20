@@ -7,14 +7,15 @@ describe Limited::Config do
 
   it "should add an Limited::Action to Limited::actions when calling Limited::Config::action" do
     expect do
-      Limited::Config.action :new, 123, :day
+      Limited::Config.action :new, amount: 123, every: :day
     end.to change(Limited, :actions)
   end
 
   describe "the Action objects in the Limited::actions array" do
     before(:all) do
-      Limited::Config.action :value_check, 123, :day
-      Limited::Config.action :value_check1, 3
+      Limited::Config.identifier :category, [:id]
+      Limited::Config.action :value_check, amount: 123, every: :day
+      Limited::Config.action :value_check1, amount: 3, per: :category
     end
 
     it "should have the correct name" do
@@ -30,6 +31,29 @@ describe Limited::Config do
     it "should have the correct interval" do
       Limited.actions[:value_check].interval.length.should eq 24 * 60 * 60
       Limited.actions[:value_check1].interval.length.should eq 1.0/0.0
+    end
+
+    it "should have the correct identifier" do
+      Limited.actions[:value_check].identifier.keys.should eq []
+      Limited.actions[:value_check1].identifier.keys.should eq [:id]
+    end
+  end
+
+  describe "the identifier objects in the Limited::identifiers array" do
+    before(:all) do
+      Limited.configure do
+        identifier :section, [:id]
+        action :do_some_task, amount: 2, per: :section
+      end
+    end
+
+    it "should use the name to store the object" do
+      Limited.identifiers[:do_some_task].should be_a(Limited::Actor::Identifier)
+    end
+
+
+    it "should contain the symbols passed with the Limited::Config.identifier method" do
+      Limited.identifiers[:do_some_task].keys.should eq [:id]
     end
   end
 
@@ -47,6 +71,14 @@ describe Limited::Config do
           action :some_action, 123
         end
       end.to change(Limited, :actions)
+    end
+
+    it "should be possible to add identifiers via the Limited::configure method" do
+      expect do
+        Limited.configure do
+          identifier :user, [:user_id]
+        end
+      end.to change(Limited, :identifiers)
     end
   end
 end

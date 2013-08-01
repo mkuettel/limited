@@ -13,7 +13,6 @@ describe Limited::Action do
   it { should respond_to(:num_executed) }
   it { should respond_to(:num_left) }
   it { should respond_to(:identifier) }
-  it { should respond_to(:actor) }
 
   describe "constructor" do
     it "should take a name" do
@@ -62,13 +61,31 @@ describe Limited::Action do
   describe "num_executed" do
     it "should be initialized to 0" do
       @action.num_executed.should eq 0
+      @action.num_executed({id: 21304843}).should eq 0
     end
   end
 
   describe "executed" do
-    before { @action.executed }
-    it "should increase the num_executed counter" do
-      @action.num_executed.should eq 1
+    describe "without actors" do
+      before { @action.executed }
+      it "should increase the num_executed counter" do
+        @action.num_executed.should eq 1
+      end
+    end
+
+    describe "with actors" do
+      before do
+        @actor1 = {id: 3561}
+        @actor2 = {id: 5631}
+      end
+
+      it "should increase seperately" do
+        @action.executed(@actor1)
+        @action.executed(@actor1)
+        @action.executed(@actor2)
+        @action.num_executed(@actor1).should eq 2
+        @action.num_executed(@actor2).should eq 1
+      end
     end
   end
 
@@ -85,6 +102,30 @@ describe Limited::Action do
       @action.limit_reached.should be_true
       @action.executed
       @action.limit_reached.should be_true
+    end
+
+    describe "with actors" do
+      before do
+        @actor1 = {id: 356}
+        @actor2 = {id: 563}
+      end
+
+      it "should count seperately" do
+        @action.limit_reached(@actor1).should be_false
+        @action.limit_reached(@actor2).should be_false
+        1336.times { @action.executed(@actor1) }
+        @action.limit_reached(@actor1).should be_false
+        @action.limit_reached(@actor2).should be_false
+        1336.times { @action.executed(@actor2) }
+        @action.limit_reached(@actor1).should be_false
+        @action.limit_reached(@actor2).should be_false
+        @action.executed(@actor1)
+        @action.limit_reached(@actor1).should be_true
+        @action.limit_reached(@actor2).should be_false
+        @action.executed(@actor2)
+        @action.limit_reached(@actor1).should be_true
+        @action.limit_reached(@actor2).should be_true
+      end
     end
   end
 
@@ -116,7 +157,7 @@ describe Limited::Action do
     end
 
     it "should create an actor if it doesn't exist yet" do
-      expect { @action.actor(id: 1337) }.to change(@action, :actors)
+      expect { @action.actor(id: 1337) }.to change{@action.actors.count}.by(1)
     end
 
     it "should always return an Actor object" do

@@ -8,9 +8,10 @@ module Limited
     attr_reader :name
     # the amount of times the action can be executed
     attr_reader :limit
-
+    # an object used to distinguish users
     attr_reader :identifier
-
+    # users which have already executed this action
+    # they are differenciated by the identifier object
     attr_reader :actors
 
     ##
@@ -47,36 +48,48 @@ module Limited
     ##
     # returns the amount of times the action already
     # has been executed
-    def num_executed
+    def num_executed(actor_attributes = nil)
       check_new_interval
-      @num_executed
+      return @num_executed unless actor_attributes.is_a?(Hash)
+      actor_num_executed(actor_attributes)
     end
 
     ##
     # returns how many times the action can be executed
     # until the given limit is reached
-    def num_left
+    def num_left(actor_attributes = nil)
       check_new_interval
-      @limit - @num_executed
+      return @limit - @num_executed unless actor_attributes.is_a?(Hash)
+      actor_num_left(actor_attributes)
     end
 
     ##
     # should be called everytime
     # the action gets executed
     # so the internal counter is always up-to-date
-    def executed
+    def executed(actor_attributes = nil)
       check_new_interval
-      @num_executed += 1
+      if actor_attributes.is_a?(Hash)
+        actor_executed(actor_attributes)
+      else
+        @num_executed += 1
+      end
     end
 
     ##
     # wheter the limit of executions
     # has been exceeded
-    def limit_reached
+    def limit_reached(actor_attributes = nil)
       check_new_interval
-      @limit <= @num_executed
+      return @limit <= @num_executed unless actor_attributes.is_a?(Hash)
+      actor_limit_reached(actor_attributes)
     end
 
+    ##
+    # get a user which can execute this
+    # action by the attributes
+    #
+    # if the actor doesn't exist yet it is created
     def actor(attributes)
       actor = nil
       @actors.each do |current_actor|
@@ -100,7 +113,27 @@ module Limited
       if @interval.passed?
         @interval.reset_start
         @num_executed = 0
+        @actors.each do |current_actor|
+          current_actor.num_executed = 0
+        end
       end
     end
+
+    def actor_num_executed(attributes)
+      actor(attributes).num_executed + @num_executed
+    end
+
+    def actor_num_left(attributes)
+       @limit - actor_num_executed(attributes)
+    end
+
+    def actor_executed(attributes)
+      actor(attributes).execute
+    end
+
+    def actor_limit_reached(attributes)
+      @limit <= actor_num_executed(attributes)
+    end
+
   end
 end

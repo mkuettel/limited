@@ -18,7 +18,7 @@ module Limited
     end
 
     attr_reader :attributes
-    attr_reader :num_executed
+    attr_accessor :num_executed
 
     def initialize(identifier, values, num_executed = 0)
       raise ArgumentError.new("first parameter needs to be an identifier") unless identifier.is_a?(Identifier)

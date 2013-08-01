@@ -21,6 +21,12 @@ module Limited
       Limited.actions[name] = action
     end
 
+    ##
+    # adds a new identifier to the list of identifiers
+    # to be used by actions.
+    #
+    # raises an ArgumentError if the the name of an
+    # identifier has already been taken
     def self.identifier(name, symbols)
       identifier = Limited::Actor::Identifier.new *symbols
       raise ArgumentError.new("identifier with name :#{name.to_s} has already been added") if Limited.identifiers.has_key?(name)
